@@ -1,0 +1,2 @@
+# finanzasapp
+React Native
