@@ -3,7 +3,7 @@ import { Image, Button } from '@rneui/base'
 import React from 'react'
 
 export default function UserGuest(props) {
-    const {navigation} = props
+    const { navigation } = props
     return (
         <View style={styles.container}>
             <ScrollView
@@ -14,7 +14,8 @@ export default function UserGuest(props) {
                     resizeMode='contain'
                     style={styles.img} />
                 <Text style={styles.title}>Bienvenido a Cochinito</Text>
-                <Text style={styles.description}>?Te gustaría ahorrar dinero?,
+                <Text style={styles.description}>
+                    ¿Te gustaría ahorrar dinero?,
                     Nosotros te ayudamos, crea o inicia sesión en nuestra aplicación y
                     descubre la mejor manera de ahorrar tu dinero
                 </Text>
@@ -24,7 +25,7 @@ export default function UserGuest(props) {
                         icon={{
                             name: 'login-variant',
                             type: 'material-community',
-                            size: '15',
+                            size: 15,
                             color: 'white'
                         }}
                         buttonStyle={styles.btn}
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fff',
         height: '100%',
-        flex: 1,
+        flex:1,
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -56,8 +57,9 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold',
-        fontSize:20,
+        fontSize: 20,
         textAlign: 'center',
+        fontFamily: 'monospace',
         margin: 10
     },
     description: {
