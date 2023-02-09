@@ -7,6 +7,7 @@ export default function Login(props) {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(true)
   const login = () => {
     if (!(isEmpty(email) || isEmpty(password))) {
       console.log("Listos para iniciar sesión");
@@ -29,6 +30,19 @@ export default function Login(props) {
           onChange={(event) => setEmail(event.nativeEvent.text)}
           errorMessage={error}
         />
+        <Input
+          placeholder="Contraseña"
+          containerStyle={styles.input}
+          onChange={(event) => setPassword(event.nativeEvent.text)}
+          secureTextEntry={showPassword}
+          rightIcon={
+            <Icon type="material-community"
+              name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+              color="#007bff"
+              onPress={() => setShowPassword(!showPassword)}>
+            </Icon>}
+          errorMessage={error}
+        />
         <Button
           title="Iniciar sesión"
           icon={
@@ -36,11 +50,18 @@ export default function Login(props) {
               type="material-community"
               name="login"
               size={22}
-              colo="#fff"
+              color="#fff"
             />
           }
+          buttonStyle={styles.btnSuccess}
+          containerStyle={styles.btnContainer}
           onPress={login}
         />
+        <Text
+          style={styles.createAccount}
+          onPress={() => console.log("Vamos a loquear")}>
+          Crear cuenta
+        </Text>
       </ScrollView>
     </View>
   );
@@ -56,5 +77,18 @@ const styles = StyleSheet.create({
     height: 150,
     marginTop: 16,
     marginBottom: 16,
+  },
+  input: {
+    width: '100%',
+  },
+  btnSuccess: {
+    color: '#FFF',
+    backgroundColor: '#28a745'
+  },
+  btnContainer: {
+    margin: 16
+  },
+  createAccount:{
+    color:'#007bff'
   },
 });
