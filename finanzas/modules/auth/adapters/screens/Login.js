@@ -2,17 +2,35 @@ import { StyleSheet, Text, View, ScrollView } from "react-native";
 import { Input, Button, Image, Icon } from "@rneui/base";
 import React, { useState } from "react";
 import { isEmpty } from "lodash";
+import Loading from "../../../../kernel/components/Loading";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
 
 export default function Login(props) {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(true)
+  const [show, setShow] = useState(false)
+  const auth = getAuth()
   const login = () => {
     if (!(isEmpty(email) || isEmpty(password))) {
       console.log("Listos para iniciar sesión");
+      setShow(true)
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          console.log(user);
+          setShow(false)
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        });
     } else {
       setError("Campo obligatorio");
+      setShow(false)
     }
   };
   return (
@@ -29,6 +47,7 @@ export default function Login(props) {
           containerStyle={styles.input}
           onChange={(event) => setEmail(event.nativeEvent.text)}
           errorMessage={error}
+          autoCapitalize='none'
         />
         <Input
           placeholder="Contraseña"
@@ -59,9 +78,10 @@ export default function Login(props) {
         />
         <Text
           style={styles.createAccount}
-          onPress={() => console.log("Vamos a loquear")}>
+          onPress={() => console.log("Vamos")}>
           Crear cuenta
         </Text>
+        <Loading show={show} text='Iniciando sesión' />
       </ScrollView>
     </View>
   );
@@ -88,7 +108,7 @@ const styles = StyleSheet.create({
   btnContainer: {
     margin: 16
   },
-  createAccount:{
-    color:'#007bff'
+  createAccount: {
+    color: '#007bff'
   },
 });
