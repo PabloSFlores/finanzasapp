@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import { Input, Button, Image, Icon } from "@rneui/base";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from "react";
 import { isEmpty } from "lodash";
 import Loading from "../../../../kernel/components/Loading";
@@ -20,9 +21,14 @@ export default function Login(props) {
       setShow(true)
       setError({ email: '', password: '' })
       signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
+        .then(async (userCredential) => {
           const user = userCredential.user;
-          console.log(user);
+          try {
+            await AsyncStorage.setItem('@session', JSON.stringify(user))
+          } catch (e) {
+            console.error("Error -> login Storage",e);
+          }
+          console.log("Login",user);
           setShow(false)
           navigation.navigate("userGuestStack")
         })

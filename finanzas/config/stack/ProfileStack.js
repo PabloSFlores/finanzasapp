@@ -8,7 +8,6 @@ const Stack = createNativeStackNavigator()
 export default function ProfileStack() {
     return (
         <Stack.Navigator
-        initialRouteName='userGuestStack'
             screenOptions={{
                 headerMode: 'screen',
                 headerTintColor: 'white',

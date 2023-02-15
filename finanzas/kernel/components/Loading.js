@@ -3,7 +3,7 @@ import React from 'react'
 import { Overlay } from '@rneui/base'
 
 export default function Loading(props) {
-    console.log(props);
+    //console.log(props);
     const { show, text } = props
     return (
         <Overlay
