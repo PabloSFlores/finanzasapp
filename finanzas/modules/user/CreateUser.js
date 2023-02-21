@@ -5,6 +5,7 @@ import { isEmpty, size } from 'lodash'
 import { Image, Input, Button, Icon } from '@rneui/base'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { validateEmail } from '../../kernel/validations'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import Loading from '../../kernel/components/Loading'
 
@@ -29,8 +30,27 @@ export default function CreateUser() {
             if (validateEmail(data.email)) {
                 if ((size(data.password)) >= 6) {
                     if (data.password == data.repeatPassword) {
+                        setShow(true)
                         setError(payLoad)
                         console.log('Listo para el registro');
+                        createUserWithEmailAndPassword(auth, data.email, data.password)
+                            .then(async (userCredential) => {
+                                const user = userCredential.user;
+                                try {
+                                    await AsyncStorage.setItem('@session', JSON.stringify(user))
+                                } catch (e) {
+                                    console.error("Error -> createUser Storage", e);
+                                }
+                                console.log("Created User", user);
+                                setShow(false)
+                                navigation.navigate("profileStack")
+                            })
+                            .catch((error) => {
+                                setError({ email: '', password: 'Usuario o contraseña incorrectos' })
+                                setShow(false)
+                                const errorCode = error.code;
+                                const errorMessage = error.message;
+                            });
                     } else {
                         setError({
                             email: '',
