@@ -9,7 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import Loading from '../../kernel/components/Loading'
 
-export default function CreateUser() {
+export default function CreateUser(props) {
+    const { navigation } = props
     const payLoad = {
         email: '',
         password: '',
