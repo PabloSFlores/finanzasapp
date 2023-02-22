@@ -47,7 +47,7 @@ export default function CreateUser(props) {
                                 navigation.navigate("profileStack")
                             })
                             .catch((error) => {
-                                setError({ email: '', password: 'Usuario o contraseña incorrectos' })
+                                setError({ email: '', password: 'No se pudo crear el usuario' })
                                 setShow(false)
                                 const errorCode = error.code;
                                 const errorMessage = error.message;
