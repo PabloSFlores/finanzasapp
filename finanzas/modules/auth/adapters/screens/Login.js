@@ -30,7 +30,7 @@ export default function Login(props) {
           }
           console.log("Login",user);
           setShow(false)
-          navigation.navigate("userGuestStack")
+          navigation.navigate("profileStack")
         })
         .catch((error) => {
           setError({ email: '', password: 'Usuario o contraseña incorrectos' })
