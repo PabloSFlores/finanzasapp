@@ -4,15 +4,18 @@ import React, { useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Loading from '../../../../kernel/components/Loading'
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
-import { getAuth, updateProfile } from 'firebase/auth'
+//import { getAuth, updateProfile } from 'firebase/auth'
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
+import { doc, setDoc, getFirestore } from "firebase/firestore";
 
 export default function UserLogged(props) {
     const { setReload, user } = props
     console.log('Sesión', user);
     const [show, setShow] = useState(false)
+    const [text, setText] = useState('')
     const removeValue = async () => {
+        setText('Cerrando sesión')
         try {
             setShow(true)
             await AsyncStorage.removeItem('@session')
@@ -25,10 +28,11 @@ export default function UserLogged(props) {
     }
 
     const uploadImage = async (uri) => {
+        setText('Cambiando avatar')
         setShow(true)
         const response = await fetch(uri) //genera un blob
-        console.log('Uri response', response); 
-        const {_bodyBlob} = response
+        console.log('Uri response', response);
+        const { _bodyBlob } = response
         const storage = getStorage()
         const storageRef = ref(storage, `avatar/${user.uid}`)
         return uploadBytes(storageRef, _bodyBlob)
@@ -36,25 +40,41 @@ export default function UserLogged(props) {
 
     const changeAvatar = async () => {
         const resultPermission = await Permissions.askAsync(Permissions.CAMERA)
-        if(resultPermission.permissions.camera.status !== 'denied'){
+        if (resultPermission.permissions.camera.status !== 'denied') {
             let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
                 quality: 1
             })
-            if(!result.canceled){
+            if (!result.canceled) {
                 uploadImage(result.assets[0].uri).then((response) => {
                     console.log('Imagen actualizada')
-                    setShow(false)
+                    uploadPhotoProfile()
                 }).catch((err) => {
-                    console.log('Error - UserLogged(49)', err)
-                    setShow(false)
+                    console.log('Error', err)
                 })
-            }else{
+            } else {
                 console.log('Imagen no seleccionada');
                 setShow(false)
             }
         }
+    }
+
+    const uploadPhotoProfile = () => {
+        const storage = getStorage()
+        getDownloadURL(ref(storage, `avatar/${user.uid}`))
+            .then(async (url) => {
+                const db = getFirestore()
+                //obtener doc antes
+                const response = await setDoc(doc(db, "person", `${user.uid}`), {
+                    displayName:'',
+                    photo: url
+                })
+                console.log('respuesta - firestore',response);
+            }).catch((err) => {
+                setShow(false)
+                console.log('Error obtener Imagen', err);
+            })
     }
 
     return (
@@ -85,7 +105,7 @@ export default function UserLogged(props) {
                 buttonStyle={styles.btn}
                 onPress={removeValue}
             />
-            <Loading show={show} text='Cerrando sesión' />
+            <Loading show={show} text={text} />
         </View>
     )
 }
@@ -110,7 +130,7 @@ const styles = StyleSheet.create({
     avatar: {
         marginRight: 16
     },
-    displayName:{
+    displayName: {
         fontWeight: 'bold',
         paddingBottom: 5
     },
