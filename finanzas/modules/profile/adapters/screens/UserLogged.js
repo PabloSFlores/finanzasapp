@@ -3,6 +3,10 @@ import { Button, Avatar } from '@rneui/base'
 import React, { useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Loading from '../../../../kernel/components/Loading'
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { getAuth, updateProfile } from 'firebase/auth'
+import * as ImagePicker from 'expo-image-picker'
+import * as Permissions from 'expo-permissions'
 
 export default function UserLogged(props) {
     const { setReload, user } = props
@@ -20,6 +24,39 @@ export default function UserLogged(props) {
         }
     }
 
+    const uploadImage = async (uri) => {
+        setShow(true)
+        const response = await fetch(uri) //genera un blob
+        console.log('Uri response', response); 
+        const {_bodyBlob} = response
+        const storage = getStorage()
+        const storageRef = ref(storage, `avatar/${user.uid}`)
+        return uploadBytes(storageRef, _bodyBlob)
+    }
+
+    const changeAvatar = async () => {
+        const resultPermission = await Permissions.askAsync(Permissions.CAMERA)
+        if(resultPermission.permissions.camera.status !== 'denied'){
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 1
+            })
+            if(!result.canceled){
+                uploadImage(result.assets[0].uri).then((response) => {
+                    console.log('Imagen actualizada')
+                    setShow(false)
+                }).catch((err) => {
+                    console.log('Error - UserLogged(49)', err)
+                    setShow(false)
+                })
+            }else{
+                console.log('Imagen no seleccionada');
+                setShow(false)
+            }
+        }
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.infoContainer}>
@@ -31,7 +68,7 @@ export default function UserLogged(props) {
                 >
                     <Avatar.Accessory
                         size={50}
-                        onPress={()=>console.log('Hola')}
+                        onPress={changeAvatar}
                     />
                 </Avatar>
                 <View>
