@@ -4,28 +4,30 @@ import React, { useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Loading from '../../../../kernel/components/Loading'
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
-//import { getAuth, updateProfile } from 'firebase/auth'
+import { getAuth, updateProfile } from 'firebase/auth'
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
-import { doc, setDoc, getFirestore } from "firebase/firestore";
+// import { doc, setDoc, getFirestore } from "firebase/firestore";
 
 export default function UserLogged(props) {
-    const { setReload, user } = props
+    const auth = getAuth()
+    // const { setReload, user } = props
+    const { user } = props
     console.log('Sesión', user);
     const [show, setShow] = useState(false)
     const [text, setText] = useState('')
-    const removeValue = async () => {
-        setText('Cerrando sesión')
-        try {
-            setShow(true)
-            await AsyncStorage.removeItem('@session')
-            setShow(false)
-            setReload(true)
-        } catch (e) {
-            setShow(false)
-            console.log('Error - UserLogged(12)', e);
-        }
-    }
+    // const removeValue = async () => {
+    //     setText('Cerrando sesión')
+    //     try {
+    //         setShow(true)
+    //         await AsyncStorage.removeItem('@session')
+    //         setShow(false)
+    //         setReload(true)
+    //     } catch (e) {
+    //         setShow(false)
+    //         console.log('Error - UserLogged(12)', e);
+    //     }
+    // }
 
     const uploadImage = async (uri) => {
         setText('Cambiando avatar')
@@ -63,14 +65,17 @@ export default function UserLogged(props) {
     const uploadPhotoProfile = () => {
         const storage = getStorage()
         getDownloadURL(ref(storage, `avatar/${user.uid}`))
-            .then(async (url) => {
-                const db = getFirestore()
-                //obtener doc antes
-                const response = await setDoc(doc(db, "person", `${user.uid}`), {
-                    displayName:'',
-                    photo: url
+            .then((url) => {
+                updateProfile(auth.currentUser, {
+                    photoURL: url
                 })
-                console.log('respuesta - firestore',response);
+                    .then(() => {
+                        setShow(false)
+                    })
+                    .catch((err) => {
+                        setShow(false)
+                        console.log('Fallo', err);
+                    })
             }).catch((err) => {
                 setShow(false)
                 console.log('Error obtener Imagen', err);
@@ -79,31 +84,36 @@ export default function UserLogged(props) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.infoContainer}>
-                <Avatar
-                    size='xlarge'
-                    rounded
-                    source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/finanzas-cab04.appspot.com/o/avatar%2FllMqQCspyvfnEEc08MojLJHc5Di1.jpg?alt=media&token=05f25976-9f03-4f7b-838e-57029ff8bc00' }}
-                    containerStyle={styles.avatar}
-                >
-                    <Avatar.Accessory
-                        size={50}
-                        onPress={changeAvatar}
-                    />
-                </Avatar>
-                <View>
-                    <Text style={styles.displayName}>
-                        {user.providerData[0].displayName ? user.providerData[0].displayName : 'Anónimo'}
-                    </Text>
-                    <Text>
-                        {user.providerData[0].email}
-                    </Text>
+            {user && (
+                <View style={styles.infoContainer}>
+                    <Avatar
+                        size='xlarge'
+                        rounded
+                        source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/finanzas-cab04.appspot.com/o/avatar%2FllMqQCspyvfnEEc08MojLJHc5Di1.jpg?alt=media&token=05f25976-9f03-4f7b-838e-57029ff8bc00' }}
+                        containerStyle={styles.avatar}
+                    >
+                        <Avatar.Accessory
+                            size={50}
+                            onPress={changeAvatar}
+                        />
+                    </Avatar>
+                    <View>
+                        <Text style={styles.displayName}>
+                            {user.providerData[0].displayName ? user.providerData[0].displayName : 'Anónimo'}
+                        </Text>
+                        <Text>
+                            {user.providerData[0].email}
+                        </Text>
+                    </View>
                 </View>
-            </View>
+            )}
             <Button
                 title='Cerrar sesión'
                 buttonStyle={styles.btn}
-                onPress={removeValue}
+                onPress={() => {
+                    setText('Cerrando sesión')
+                    return auth.signOut()
+                }}
             />
             <Loading show={show} text={text} />
         </View>

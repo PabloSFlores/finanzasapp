@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import { Image, Button } from '@rneui/base'
 import React from 'react'
-import { useNavigation } from '@react-navigation/native'
+// import { useNavigation } from '@react-navigation/native'
 
-export default function UserGuest() {
-    const navigation = useNavigation()
+export default function UserGuest(props) {
+    const navigation = props
     return (
         <View style={styles.container}>
             <ScrollView
