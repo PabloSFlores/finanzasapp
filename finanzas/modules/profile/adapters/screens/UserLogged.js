@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { Button, Avatar } from '@rneui/base'
 import React, { useState } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+// import AsyncStorage from '@react-native-async-storage/async-storage'
 import Loading from '../../../../kernel/components/Loading'
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { getAuth, updateProfile } from 'firebase/auth'
@@ -12,6 +12,7 @@ import * as Permissions from 'expo-permissions'
 export default function UserLogged(props) {
     const auth = getAuth()
     // const { setReload, user } = props
+    console.log('currentUser', auth.currentUser);
     const { user } = props
     console.log('Sesión', user);
     const [show, setShow] = useState(false)
@@ -89,7 +90,7 @@ export default function UserLogged(props) {
                     <Avatar
                         size='xlarge'
                         rounded
-                        source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/finanzas-cab04.appspot.com/o/avatar%2FllMqQCspyvfnEEc08MojLJHc5Di1.jpg?alt=media&token=05f25976-9f03-4f7b-838e-57029ff8bc00' }}
+                        source={{ uri: `${auth.currentUser.photoURL}` }}
                         containerStyle={styles.avatar}
                     >
                         <Avatar.Accessory
@@ -107,14 +108,16 @@ export default function UserLogged(props) {
                     </View>
                 </View>
             )}
-            <Button
-                title='Cerrar sesión'
-                buttonStyle={styles.btn}
-                onPress={() => {
-                    setText('Cerrando sesión')
-                    return auth.signOut()
-                }}
-            />
+            <View style={styles.btnContainer}>
+                <Button
+                    title='Cerrar sesión'
+                    buttonStyle={styles.btn}
+                    onPress={() => {
+                        setText('Cerrando sesión')
+                        return auth.signOut()
+                    }}
+                />
+            </View>
             <Loading show={show} text={text} />
         </View>
     )
@@ -125,11 +128,17 @@ const styles = StyleSheet.create({
         minHeight: '100%',
         backgroundColor: '#FFF'
     },
+    btnContainer: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     btn: {
         marginTop: 30,
-        borderRadius: 0,
         backgroundColor: 'tomato',
-        paddingVertical: 10
+        paddingVertical: 10,
+        marginHorizontal: 20,
+        borderRadius: 10,
+        width: 250
     },
     infoContainer: {
         alignItems: 'center',

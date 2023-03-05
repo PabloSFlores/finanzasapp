@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import { Image, Button } from '@rneui/base'
 import React from 'react'
-// import { useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
+import Alert from '../../../../kernel/components/Alert'
 
-export default function UserGuest(props) {
-    const navigation = props
+export default function UserGuest() {
+    const navigation = useNavigation()
     return (
         <View style={styles.container}>
             <ScrollView
@@ -34,6 +35,7 @@ export default function UserGuest(props) {
                         onPress={() => navigation.navigate('loginStack')}
                     />
                 </View>
+                {/* <Alert show={true} text='Hola' type='success'/>                 */}
             </ScrollView>
         </View>
     )
