@@ -1,76 +1,78 @@
 import { StyleSheet, Text, View } from 'react-native'
-import { getAuth, updateProfile } from 'firebase/auth';
-import React from 'react'
-import { Button, Icon, Input } from '@rneui/base';
-import { useState } from 'react';
-import Loading from '../../../../../kernel/components/Loading';
-import { isEmpty } from 'lodash';
+import React, { useEffect, useState } from 'react'
+import * as Location from 'expo-location'
+import * as Permission from 'expo-permissions'
+import MapView from 'react-native-maps'
+import { Dimensions, Alert } from 'react-native'
+import { Button, Divider } from '@rneui/base'
+
+const widthScreen = Dimensions.get('window').width
 
 export default function ChangeAddress() {
-    const auth = getAuth()
-    const [displayName, setDisplayName] = useState(auth.currentUser.displayName ? auth.currentUser.displayName : '')
-    const [show, setShow] = useState(false)
-    const [text, setText] = useState('')
-    const [error, setError] = useState({ displayName: '' })
-
-    const updateDisplayName = () => {
-        setShow(true)
-        setText('Actualizando...')
-        if (!isEmpty(displayName)) {
-            updateProfile(auth.currentUser, {
-                displayName: displayName
-            })
-                .then(() => {
-                    setShow(false)
-                })
-                .catch((err) => {
-                    setShow(false)
-                    console.log('Fallo', err);
-                })
-        }else{
-            setShow(false)
-        }
-    }
-
+    const [address, setAddress] = useState(null)
 
     return (
         <View>
-            <Input
-                value={displayName}
-                label='Cambiar nombre'
-                containerStyle={styles.input}
-                onChange={(event) => setDisplayName(event.nativeEvent.text)}
-                errorMessage={error.displayName}
-                autoCapitalize='none'
-            />
-            <Button
-                title="Actualizar"
-                icon={
-                    <Icon
-                        type="material-community"
-                        name="update"
-                        size={22}
-                        color="#fff"
-                    />
-                }
-                buttonStyle={styles.btnSuccess}
-                containerStyle={styles.btnContainer}
-                onPress={updateDisplayName}
-            />
-            <Loading show={show} text={text} />
+            <Text>ChangeAddress</Text>
         </View>
     )
 }
 
-const styles = StyleSheet.create({
-    btnSuccess: {
-        color: '#FFF',
-        backgroundColor: '#28a745'
-    },
-    btnContainer: {
-        margin: 16
-    },
-    input: {
-        width: '100%',
-    },
-})
+function Map(props) {
+    const { isVisibleMap } = props
+    const [location, setLocation] = useState(null)
+    useEffect(() => {
+        (async () => {
+            const resultPermission = await Permission.askAsync(Permission.LOCATION)
+            if (resultPermission.status !== 'denied') {
+                const loc = Location.getCurrentPositionAsync({})
+                setLocation({
+                    latitude: loc.coords.latitude,
+                    longitud: loc.coords.longitud,
+                    latitudeDelta: 0.001,
+                    longitudDelta: 0.001
+                })
+            } else {
+                //alert
+            }
+        })()
+    }, [])
+    return (
+        <View>
+            {location &&
+                (<MapView
+                    style={styles.map}
+                    initialRegion={location}
+                    showsUserLocation={true}
+                    onRegionChange={(region) => setLocation(region)}
+                >
+                    <MapView.Marker
+                        coordinate={{
+                            latitude: location.latitude,
+                            longitud: location.longitud
+                        }}
+                    />
+                </MapView>)}
+            <View style={{ flex: 1, alignItems: 'center', marginTop: 10 }}>
+                <Divider style={styles.divider} />
+            </View>
+            <View style={styles.containerButtons}>
+                <Button
+                    title='Cancelar ubicación'
+                    containerStyle={styles.btn}
+                    buttonStyle={styles.btnDanger}
+                    onPress={() => isVisibleMap(false)}
+                />
+                <Button
+                    title='Guardar'
+                    containerStyle={styles.btn}
+                    buttonStyle={styles.btnSuccess}
+                    onPress={save}
+                />
+            </View>
+        </View>
+    )
+
+}
+
+const styles = StyleSheet.create({})
