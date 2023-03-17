@@ -10,6 +10,7 @@ export default function Modal(props) {
             windowBackgroundColor='rgba(0,0,0,0.5)'
             overlayBackgroundColor='transparent'
             overlayStyle={styles.overlay}
+            animationType='slide'
             onBackdropPress={() => setShow(false)}
         >
             {children}

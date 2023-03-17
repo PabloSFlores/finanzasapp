@@ -6,7 +6,8 @@ import { useState } from 'react';
 import Loading from '../../../../../kernel/components/Loading';
 import { isEmpty } from 'lodash';
 
-export default function ChangeDisplayName() {
+export default function ChangeDisplayName(props) {
+    const { setReload } = props
     const auth = getAuth()
     const [displayName, setDisplayName] = useState(auth.currentUser.displayName ? auth.currentUser.displayName : '')
     const [show, setShow] = useState(false)
@@ -21,14 +22,18 @@ export default function ChangeDisplayName() {
                 displayName: displayName
             })
                 .then(() => {
+                    setError({displayName: ''})
                     setShow(false)
+                    setReload(true)
                 })
                 .catch((err) => {
+                    setError({displayName: 'Error al actualizar nombre'})
                     setShow(false)
                     console.log('Fallo', err);
                 })
         }else{
             setShow(false)
+            setError({displayName: 'Campo obligatorio'})
         }
     }
 
@@ -38,6 +43,7 @@ export default function ChangeDisplayName() {
             <Input
                 value={displayName}
                 label='Cambiar nombre'
+                labelStyle={styles.label}
                 containerStyle={styles.input}
                 onChange={(event) => setDisplayName(event.nativeEvent.text)}
                 errorMessage={error.displayName}
@@ -63,9 +69,15 @@ export default function ChangeDisplayName() {
 }
 
 const styles = StyleSheet.create({
+    label: {
+        marginTop: 10,
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
     btnSuccess: {
         color: '#FFF',
-        backgroundColor: '#28a745'
+        backgroundColor: 'tomato'
     },
     btnContainer: {
         margin: 16

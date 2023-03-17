@@ -9,17 +9,18 @@ import { ListItem, Icon } from '@rneui/base'
 
 export default function AccountOptions(props) {
     const { userInfo } = props
+    const { setReload } = props
     const [showModal, setShowModal] = useState(false)
     const [renderComponent, setRenderComponent] = useState(null)
 
     const selectComponent = (key) => {
         switch (key) {
             case 'displayName':
-                setRenderComponent(<ChangeDisplayName />)
+                setRenderComponent(<ChangeDisplayName setReload={setReload}/>)
                 setShowModal(true)
                 break;
             case 'password':
-                setRenderComponent(<ChangePassword />)
+                setRenderComponent(<ChangePassword setReload={setReload}/>)
                 setShowModal(true)
                 break;
             case 'address':

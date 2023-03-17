@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { Button, Avatar } from '@rneui/base'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 // import AsyncStorage from '@react-native-async-storage/async-storage'
 import Loading from '../../../../kernel/components/Loading'
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
@@ -9,9 +9,16 @@ import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
 // import { doc, setDoc, getFirestore } from "firebase/firestore";
 import AccountOptions from './AccountOptions'
+import { get } from 'lodash'
 
 export default function UserLogged(props) {
-    const auth = getAuth()
+    const [auth, setAuth] = useState(getAuth())
+    const [reload, setReload] = useState(false)
+    useEffect(()=>{
+        setAuth(getAuth())
+        console.log('Entra al effect')
+        setReload(false)
+    },[reload])
     // const { setReload, user } = props
     console.log('currentUser', auth.currentUser);
     const { user } = props
@@ -101,15 +108,15 @@ export default function UserLogged(props) {
                     </Avatar>
                     <View>
                         <Text style={styles.displayName}>
-                            {user.providerData[0].displayName ? user.providerData[0].displayName : 'Anónimo'}
+                            {auth.currentUser.displayName ? auth.currentUser.displayName : 'Anónimo'}
                         </Text>
                         <Text>
-                            {user.providerData[0].email}
+                            {auth.currentUser.email}
                         </Text>
                     </View>
                 </View>
             )}
-            <AccountOptions/>
+            <AccountOptions setReload={setReload}/>
             <View style={styles.btnContainer}>
                 <Button
                     title='Cerrar sesión'
