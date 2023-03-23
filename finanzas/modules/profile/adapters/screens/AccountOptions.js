@@ -16,15 +16,15 @@ export default function AccountOptions(props) {
     const selectComponent = (key) => {
         switch (key) {
             case 'displayName':
-                setRenderComponent(<ChangeDisplayName setReload={setReload}/>)
+                setRenderComponent(<ChangeDisplayName setReload={setReload} />)
                 setShowModal(true)
                 break;
             case 'password':
-                setRenderComponent(<ChangePassword setReload={setReload}/>)
+                setRenderComponent(<ChangePassword setReload={setReload} />)
                 setShowModal(true)
                 break;
             case 'address':
-                setRenderComponent(<ChangeAddress />)
+                setRenderComponent(<ChangeAddress setShowModal={setShowModal} />)
                 setShowModal(true)
                 break;
             default:

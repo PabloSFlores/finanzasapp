@@ -6,7 +6,7 @@ import Loading from '../../../../kernel/components/Loading'
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { getAuth, updateProfile } from 'firebase/auth'
 import * as ImagePicker from 'expo-image-picker'
-import * as Permissions from 'expo-permissions'
+import * as MediaLibrary from 'expo-media-library'
 // import { doc, setDoc, getFirestore } from "firebase/firestore";
 import AccountOptions from './AccountOptions'
 import { get } from 'lodash'
@@ -50,8 +50,8 @@ export default function UserLogged(props) {
     }
 
     const changeAvatar = async () => {
-        const resultPermission = await Permissions.askAsync(Permissions.CAMERA)
-        if (resultPermission.permissions.camera.status !== 'denied') {
+        const {status} = await MediaLibrary.requestPermissionsAsync()
+        if (status !== 'denied') {
             let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
@@ -68,6 +68,8 @@ export default function UserLogged(props) {
                 console.log('Imagen no seleccionada');
                 setShow(false)
             }
+        }else{
+            //alert
         }
     }
 
