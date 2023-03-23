@@ -16,13 +16,13 @@ export default function UserLogged(props) {
     const [reload, setReload] = useState(false)
     useEffect(()=>{
         setAuth(getAuth())
-        console.log('Entra al effect')
+        // console.log('Entra al effect')
         setReload(false)
     },[reload])
     // const { setReload, user } = props
-    console.log('currentUser', auth.currentUser);
+    // console.log('currentUser', auth.currentUser);
     const { user } = props
-    console.log('Sesión', user);
+    // console.log('Sesión', user);
     const [show, setShow] = useState(false)
     const [text, setText] = useState('')
     // const removeValue = async () => {
