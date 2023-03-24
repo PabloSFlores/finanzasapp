@@ -38,6 +38,7 @@
     },
     "android": {
       "package":"com.pablosflores.finanzas",
+      "googleServicesFile":"./google-services.json",
       "config":{
         "googleMaps":{
           "apiKey":"AIzaSyBQcNA9nFdeYih-ZUdm4aJZv1FauFZxMXM"

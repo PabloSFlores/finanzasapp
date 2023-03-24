@@ -18,7 +18,8 @@ export default function ChangeAddress(props) {
                         longitude: loc.coords.longitude,
                         latitudDelta: 0.004757,
                         longitudDelta: 0.006866,
-                    });
+                    })
+                    console.log('location', location)
                 } catch (error) {
                     console.log("error", error);
                 }
