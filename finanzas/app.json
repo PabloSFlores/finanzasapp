@@ -4,15 +4,14 @@
       [
         "expo-media-library",
         {
-          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
-          "isAccessMediaLocationEnabled": true
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos."
         }
-      ]
-      ,
+      ],
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location.",
+          "isAndroidBackgroundLocationEnabled": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
     ],
@@ -34,14 +33,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pablosflores.finanzas"
     },
     "android": {
-      "package":"com.pablosflores.finanzas",
-      "googleServicesFile":"./google-services.json",
-      "config":{
-        "googleMaps":{
-          "apiKey":"AIzaSyBQcNA9nFdeYih-ZUdm4aJZv1FauFZxMXM"
+      "package": "com.pablosflores.finanzas",
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBQcNA9nFdeYih-ZUdm4aJZv1FauFZxMXM"
         }
       },
       "adaptiveIcon": {
