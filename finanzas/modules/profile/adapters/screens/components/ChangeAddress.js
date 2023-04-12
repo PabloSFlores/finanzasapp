@@ -72,10 +72,11 @@ async function registerForPushNotificationsAsync() {
 export default function ChangeAddress(props) {
     const { setShowModal } = props;
     const [location, setLocation] = useState({
-        latitude: "-99.20074623157105", 
-        longitude:"18.850405228048416",
-        latitudDelta: 0.004757, 
-        longitudDelta: 0.006866,});
+        latitude: "-99.20074623157105",
+        longitude: "18.850405228048416",
+        latitudDelta: 0.004757,
+        longitudDelta: 0.006866,
+    });
     const [expoPushToken, setExpoPushToken] = useState('');
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
@@ -83,24 +84,22 @@ export default function ChangeAddress(props) {
 
     useEffect(() => {
         (async () => {
-            
             try {
                 let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== "denied") {
-                try {
-                    const loc = await Location.getCurrentPositionAsync({});
-                    
-                    console.log('location', loc)
-                } catch (error) {
-                    console.log("error", error);
+                if (status !== "denied") {
+                    try {
+                        const loc = await Location.getCurrentPositionAsync({});
+                        console.log('location', loc)
+                    } catch (error) {
+                        console.log("error", error);
+                    }
+                } else {
+                    //alert
                 }
-            } else {
-                //alert
-            }
             } catch (error) {
                 console.log("error", error);
             }
-            
+
         })();
     }, []);
 
@@ -125,23 +124,23 @@ export default function ChangeAddress(props) {
 
     return (
         <View>
-                <MapView
-                    style={styles.map}
-                    initialRegion={location}
-                    showsUserLocation={true}
-                    minZoomLevel={15}
-                    onRegionChange={(region) => setLocation(region)}
-                >
-                    <Marker
-                        coordinate={{
-                            latitude: location.latitude,
-                            longitude: location.longitude,
-                        }}
-                        title="mi ubicación"
-                        draggable
-                    />
-                </MapView>
-            
+            <MapView
+                style={styles.map}
+                initialRegion={location}
+                showsUserLocation={true}
+                minZoomLevel={15}
+                onRegionChange={(region) => setLocation(region)}
+            >
+                <Marker
+                    coordinate={{
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                    }}
+                    title="mi ubicación"
+                    draggable
+                />
+            </MapView>
+
             <View style={{ flex: 1, alignItems: "center", marginTop: 10 }}>
                 <Divider color="tomato" width={2} style={styles.divider} />
             </View>
